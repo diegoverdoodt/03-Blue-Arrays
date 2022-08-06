@@ -42,6 +42,7 @@ public class Warrior extends Character implements Attacker {
 
     public void setStrength(int strength) {
         this.strength = strength;
+
     }
 
 
@@ -59,13 +60,23 @@ public class Warrior extends Character implements Attacker {
         return result;
     }
 
-    public void heavyAttack(Warrior warrior,Character character){
+    /*public void heavyAttack(Warrior warrior,Character character){
         character.setHp(getHp()-warrior.getStrength());
         warrior.setStamina(getStamina()-HEAVYATTACKLESSSTAMINA);
     }
     public void weakAttack(Warrior warrior,Character character){
         character.setHp(getHp()-(int)warrior.getStrength()/2);
         warrior.setStamina(getStamina()+WEAKATTACKMORESTAMINA);
+    }*/
+
+    public void attack(Warrior warrior, Character character) {
+        if(warrior.getStamina() >= 5){
+            character.setHp(character.getHp()-warrior.getStrength());
+            warrior.setStamina(warrior.getStamina()-HEAVYATTACKLESSSTAMINA);
+        } if (warrior.getStamina() < 5) {
+            character.setHp(character.getHp()-(int)warrior.getStrength()/2);
+            warrior.setStamina(warrior.getStamina()+WEAKATTACKMORESTAMINA);
+        }
     }
 
 
@@ -135,5 +146,7 @@ public class Warrior extends Character implements Attacker {
         result.add(w2);
         return result;
     }
+
+
 }
 

@@ -1,7 +1,5 @@
 package Homework1;
 
-import java.util.ArrayList;
-
 public class Wizard extends Character implements Attacker{
 
     private int mana, intelligence;
@@ -42,17 +40,30 @@ public class Wizard extends Character implements Attacker{
         return intelligence;
     }
 
-    public void fireball(Wizard wizard,Character character){
+    /*public void fireball(Wizard wizard,Character character){
         character.setHp(getHp()-wizard.getIntelligence());
         wizard.setMana(getMana()-FIREBALLLESSMANA);
     }
     public void staffHit(Wizard wizard,Character character){
         character.setHp(getHp()- 2);
         wizard.setMana(getMana()+STAFFHITMOREMANA);
+    }*/
+
+
+
+
+    public void attack(Wizard wizard, Character character) {
+        if (wizard.getMana() >= 5) {
+            character.setHp(character.getHp()-wizard.getIntelligence());
+            wizard.setMana(wizard.getMana()-FIREBALLLESSMANA);
+        } if (wizard.getMana() < 5) {
+            character.setHp(character.getHp()- 2);
+            wizard.setMana(wizard.getMana()+STAFFHITMOREMANA);
+        }
     }
 
 
-    @Override
+    /*@Override
     public ArrayList attack(Character player1, Character player2, String P2Type) {
         ArrayList result = new ArrayList<>(2);
         Wizard w1 = (Wizard) player1;
@@ -66,9 +77,9 @@ public class Wizard extends Character implements Attacker{
             result = fightWizWar(w1, w2);
         }
         return result;
-    }
+    }*/
 
-    public ArrayList fightWizWiz(Wizard w1, Wizard w2) {
+    /*public ArrayList fightWizWiz(Wizard w1, Wizard w2) {
         ArrayList result = new ArrayList<>(2);
         if (w1.getHp() > 0 & w2.getHp() > 0) {
             if (w1.getMana() < 5) {
@@ -100,8 +111,9 @@ public class Wizard extends Character implements Attacker{
         result.add(w1);
         result.add(w2);
         return result;
-    }
+    }*/
 
+    /*
     public ArrayList fightWizWar(Wizard w1, Warrior w2) {
         ArrayList result = new ArrayList<>(2);
         if (w1.getHp() > 0 & w2.getHp() > 0) {
@@ -134,6 +146,6 @@ public class Wizard extends Character implements Attacker{
         result.add(w1);
         result.add(w2);
         return result;
-    }
+    }*/
 }
 

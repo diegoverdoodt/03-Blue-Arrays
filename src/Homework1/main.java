@@ -1,10 +1,12 @@
 package Homework1;
 
+import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 public class main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws FileNotFoundException {
+
 
         System.out.println("** Bienvenido al juego de Array Azul ** \nElige como quieres jugar al juego\nCargar un CSV (escribe cargar)\nJugar una partida random (escribe random)\nJugar una partida custom (escibe custom)");
         Scanner scan = new Scanner(System.in);
