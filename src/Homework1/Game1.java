@@ -4,6 +4,8 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
+import java.io.FileWriter;
+import java.io.IOException;
 
 
 
@@ -206,7 +208,7 @@ public class Game1 {
     }
 
     // Metodo para jugar cada batalla segun los dos jugadores
-    public void batalla(HashMap batalla) throws IOException {
+    public void batalla(HashMap batalla) {
         Character jugador1 = (Character) batalla.get(selectedId1);
         Character jugador2 = (Character) batalla.get(selectedId2);
         round(jugador1, jugador2);
@@ -217,12 +219,19 @@ public class Game1 {
 
         if (guardar.equals("y")) {
             //EscribirCSV
-            File file = new File("src/Homework1/partidaguardada.csv");
-            FileWriter fileWriter = new FileWriter(file);
+            try {
+                FileWriter writer = new FileWriter("partidaguardada.csv");
+                writer.write("Equipo,Type,Name,HP,Stamina / Mana,Strength / Intelligence\n");
+                writer.write("team,Type,Name,HP,Stamina / Mana,Strength / Intelligence\n");
+                writer.close();
+                //writer.write(Metodo para saber primer valor id + "," + tipo + "," + nombre + "," + hp + "," + stamina o mana + "," + Strength o Intelligence + "\n")
+            }
+            catch (Exception e){
+                System.err.println("Error");
+            }
 
 
 
-            File createCSV = file;
             System.out.println("guardando");
             System.out.println("Saliendo del juego");
             System.exit(0);
