@@ -1,21 +1,22 @@
 package Homework1;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
-import java.io.FileWriter;
-import java.io.IOException;
-
-
-
 public class Game1 {
 
     /* Variables */
+    public static final String ANSI_BLUE = "\u001B[34m";
+    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_RED = "\u001B[31m";
 
-    private String[] namesWarriors = {"Warrior1","Warrior2","Warrior3","Warrior4","Warrior5","Warrior6","Warrior7","Warrior8","Warrior9","Warrior10"};
-    private String[] namesWizards = {"Wizards1","Wizards2","Wizards3","Wizards4","Wizards5","Wizards6","Wizards7","Wizards8","Wizards9","Wizards10"};
-    int maxPlayers = 6;
+    private final String[] namesWarriors = {"Warrior 1","Warrior 2","Warrior 3","Warrior 4","Warrior 5","Warrior 6","Warrior 7","Warrior 8","Warrior 9","Warrior 10"};
+    private final String[] namesWizards = {"Wizard 1","Wizard 2","Wizard 3","Wizard 4","Wizard 5","Wizard 6","Wizard 7","Wizard 8","Wizard 9","Wizard 10"};
+    int maxPlayers = 50;
     private int idx = 0;
     String[] characterType = new String[]{"warrior", "wizard"};
     int[] hpWarrior = new int[]{100, 200};
@@ -25,6 +26,8 @@ public class Game1 {
     int[] intelligence = new int[]{1, 50};
     private int selectedId1;
     private int selectedId2;
+    private int randId1;
+    private int randId2;
 
     HashMap<Integer, Character> equipo1 = new HashMap<>();
     HashMap<Integer, Character> equipo2 = new HashMap<>();
@@ -34,44 +37,48 @@ public class Game1 {
     /* Constructor */
 
     public Game1(String election) throws FileNotFoundException {
-        election.toLowerCase();
         switch (election){
-            case "cargar":
+            case "1":
                 System.out.println("Cargar el fichero CSV");
                 createCSV1();
+
                 playGame1(equipo1, equipo2);
 
                 break;
 
-            case "random":
+            case "2":
                 System.out.println("Generando la partida random");
-                //createRandom();
                 int[] randPlayers = new int[]{1,maxPlayers};
                 int numChar = randomMethod(randPlayers);
 
                 equipo1 = createRandom1(1, numChar);
                 equipo2 = createRandom1(2, numChar);
+
+                printList1(equipo1,1);
+                printList1(equipo2,2);
+
                 playGame1(equipo1, equipo2);
 
-                //cargar partida random
-                //Empezar juego
                 break;
 
-            case "custom":
+            case "3":
                 System.out.println("Carga los valores que quieras usar");
                 createCustom();
-                //cargar partida custom
-                //empezar juego
+
+                playGame1(equipo1, equipo2);
+
                 break;
-            case "close":
+
+            case "4":
+                System.out.println("Saliendo del juego");
                 System.exit(0);
         }
     }
     /* Metodos principales */
     // Crea partida a partir de un CSV
-    // Abrir CSV
+
     public void createCSV1 () throws FileNotFoundException {
-        String archCSV = "src/Homework1/prueba1.csv";
+        String archCSV = "src/Homework1/partidaguardada.csv";
         Scanner fichero = new Scanner(new File(archCSV));
         System.out.println(fichero.nextLine());
 
@@ -105,23 +112,10 @@ public class Game1 {
                     cementerio1.put(id, new Wizard(id, elemento[2], Integer.parseInt(elemento[3]), false, Integer.parseInt(elemento[4]), Integer.parseInt(elemento[5])));
                 }
             }
-
         }
-
         printList1(equipo1,1);
         printList1(equipo2,2);
-        printList1(cementerio1,9);
-
-
-        // recoger valores de CSV con el orden que toca
-        // diferenciar entre Warrior y Wizard
-        // saber orden de valores de CSV para introducir en los constructores
-        // Equipo (1 o 2) | Warrior o Wizard | Nombre | HP | Stamina y Mana | Strength y Intelligence
-        // Si HP es 0, enviar a cementerio directamente
-        // creas los characters - Warriors o Wizards
-        // juegas
-        // guardar csv
-
+        printCementerio1(cementerio1);
     }
 
 
@@ -133,9 +127,9 @@ public class Game1 {
             int id = setId(numEquipo);
             String type = randomType(characterType);
             if (type.equals("wizard")) {
-                equipo.put(id, new Wizard(id, namesWizards[(int) (Math.random() * namesWizards.length)], randomMethod(hpWizard), true, randomMethod(staminaMana), randomMethod(intelligence)));
+                equipo.put(id, new Wizard(id, changeName(equipo, namesWizards[(int) (Math.random() * namesWizards.length)]), randomMethod(hpWizard), true, randomMethod(staminaMana), randomMethod(intelligence)));
             } if (type.equals("warrior")) {
-                equipo.put(id, new Warrior(id, namesWarriors[(int)(Math.random() * namesWarriors.length)], randomMethod(hpWarrior), true, randomMethod(staminaMana), randomMethod(strength)));
+                equipo.put(id, new Warrior(id, changeName(equipo, namesWarriors[(int)(Math.random() * namesWarriors.length)]), randomMethod(hpWarrior), true, randomMethod(staminaMana), randomMethod(strength)));
             }
         }
         //Printamos por pantalla los equipos.
@@ -148,29 +142,72 @@ public class Game1 {
         System.out.println("¿Cuantos jugadores quieres que haya en cada equipo?");
         Scanner scan = new Scanner(System.in);
         int election = scan.nextInt();
-        ArrayList team1 = createTeams(election, 1);
+        System.out.println("Existen dos tipos de jugadores, Magos (M) y Guerreros (G)\n" +
+                "Para elegir entre guerrero o mago, pon su inicial " +  ANSI_BLUE + "G" + ANSI_RESET + " o " + ANSI_BLUE + "M" + ANSI_RESET + "\n" +
+                "Para los Magos introduce valores para las siguientes caracteristicas\n" +
+                "   Nombre\n" +
+                "   Vida (valores entre 50 y 100),\n" +
+                "   Mana ( valores de 10 a 50),\n" +
+                "   Inteligencia (valores de 1 a 50)\n\n" +
+                "Para los Guerreros debes introducir los siguientes valores\n" +
+                "   Nombre\n" +
+                "   Vida (valores entre 100 y 200,\n" +
+                "   Stamina (valores entre 10 y 50),\n" +
+                "   Fuerza (valores entre 1 y 10)\n\n" +
+                "Ejemplos:\n"+
+                "   Crear un Mago:          "+  ANSI_BLUE +"M-Merlin-75-40-35" + ANSI_RESET + "\n" +
+                "   Crear un Guerrero:      "+  ANSI_BLUE +"G-Atila-150-35-7" + ANSI_RESET + "\n");
+        System.out.println("Empezamos creando el primer equipo");
+        equipo1 = CreateTeamCustom(1, election);
+        System.out.println("Vamos con el segundo equipo");
+        equipo2 = CreateTeamCustom(2, election);
+        printList1(equipo1,1);
+        printList1(equipo2,2);
     }
 
 
 
     // Metodo para jugar la partida
-    public HashMap<Integer, Character> playGame1(HashMap equipo1, HashMap equipo2) {
+    public void playGame1(HashMap equipo1, HashMap equipo2) {
 
         if (equipo1.size() > 0 && equipo2.size() > 0) {
-            System.out.println("Elige el jugador del Equipo 1 por su ID");
+            String name1 = null, name2 = null;
+            HashMap<Integer, Character> jugador1 = new HashMap<>();
+            HashMap<Integer, Character> jugador2 = new HashMap<>();
+            System.out.println( "ID  Elige el jugador del Equipo 1 por su ID    Teclea el ID\n" +
+                                "0   Elige un jugador de manera aleatoria       Teclea 0");
             Scanner scan1 = new Scanner(System.in);
             selectedId1 = scan1.nextInt();
-            HashMap<Integer, Character> jugador1 = getJugador(equipo1, selectedId1);
-            String name1 = jugador1.get(selectedId1).getName();
-            System.out.println(name1);
 
-            System.out.println("Elige el jugador del Equipo 2 por su ID");
+            if(selectedId1 == 0){
+                randId1 = randomPlayer(equipo1);
+
+                jugador1 = getJugador(equipo1, randId1);
+                name1 = jugador1.get(randId1).getName();
+                selectedId1 = randId1;
+            } else {
+                //Revisar si el numero es correcto
+                jugador1 = getJugador(equipo1, selectedId1);
+                name1 = jugador1.get(selectedId1).getName();
+            }
+            System.out.println("ID  Elige el jugador del Equipo 2 por su ID    Teclea el ID\n" +
+                    "0   Elige un jugador de manera aleatoria       Teclea 0");
             Scanner scan2 = new Scanner(System.in);
             selectedId2 = scan2.nextInt();
-            HashMap<Integer, Character> jugador2 = getJugador(equipo2,selectedId2);
-            String name2 = jugador2.get(selectedId2).getName();
-            System.out.println(name2);
 
+            if(selectedId2 == 0){
+
+                randId2 = randomPlayer(equipo2);
+                jugador2 = getJugador(equipo2, randId2);
+                name2 = jugador2.get(randId2).getName();
+                selectedId2 = randId2;
+            } else {
+                //Revisar si el numero es correcto
+
+                //Metodo para escoger random al jugador entre los IDs que haya en el equipo
+                jugador2 = getJugador(equipo2, selectedId2);
+                name2 = jugador2.get(selectedId2).getName();
+            }
             System.out.println("Comienza la lucha entre " + name1 + " y " + name2 + ".");
             printList1(jugador1, 1);
             printList1(jugador2, 2);
@@ -179,32 +216,18 @@ public class Game1 {
 
             batalla(partida);
 
-
-            //batalla(player1, player2, p1Type, p2Type);
-
-            printList1(jugador1, 1);
-            printList1(jugador2, 2);
-
             printList1(equipo1, 1);
             printList1(equipo2, 2);
-            printList1(cementerio1, 9);
+            printCementerio1(cementerio1);
 
             playGame1(equipo1, equipo2);
-        /*} else if (team1.size() > 0 && team2.size() <= 0){
-            System.out.println("El equipo 1 ha ganado la partida");
-            System.exit(0);
-
-        } else if (team1.size() <=0 && team2.size() >0){
-            System.out.println("El equipo 2 ha ganado la partida");
-            System.exit(0);
-        }*/
 
         } else if (equipo1.size() > 0 && equipo2.size() <= 0){
-            System.out.println("El equipo 1 ha ganado el juego");
+            System.out.println(ANSI_BLUE+"El equipo 1 ha ganado el juego"+ANSI_RESET);
         } else {
-            System.out.println("El equipo 2 ha ganado el juego");
+            System.out.println(ANSI_BLUE+"El equipo 2 ha ganado el juego"+ANSI_RESET);
         }
-        return null;
+
     }
 
     // Metodo para jugar cada batalla segun los dos jugadores
@@ -220,47 +243,45 @@ public class Game1 {
         if (guardar.equals("y")) {
             //EscribirCSV
             try {
-                FileWriter writer = new FileWriter("partidaguardada.csv");
-                writer.write("Equipo,Type,Name,HP,Stamina / Mana,Strength / Intelligence\n");
-                writer.write("team,Type,Name,HP,Stamina / Mana,Strength / Intelligence\n");
-                writer.close();
-                //writer.write(Metodo para saber primer valor id + "," + tipo + "," + nombre + "," + hp + "," + stamina o mana + "," + Strength o Intelligence + "\n")
-            }
+                escribirCSV();
+                }
             catch (Exception e){
                 System.err.println("Error");
             }
-
-
-
             System.out.println("guardando");
             System.out.println("Saliendo del juego");
             System.exit(0);
         }
-
     }
 
     //  Jugar cada round
     public void round(Character jugador1, Character jugador2){
         boolean hp1 = jugador1.isAlive();
         boolean hp2 = jugador2.isAlive();
+        String type1 = jugador1.type.toLowerCase();
+        String type2 = jugador2.type.toLowerCase();
+
 
         if (hp1){
             if(hp2) {
                 jugador1.attack(jugador1, jugador2);
-                printRound1(jugador1, 1);
-                printRound1(jugador2, 2);
+                System.out.println("\n");
+                printRound1(jugador1, 1, type1);
+                printRound1(jugador2, 2, type2);
                 round(jugador1, jugador2);
-            } if (hp2 == false){
-                System.out.println(jugador1.getName() + " ha ganado al jugador " + jugador2.getName() + ". " + jugador1.getName() + " vuelve a su equipo y " + jugador2.getName() + "va al cementerio.");
+            } if (!hp2){
+                System.out.println(ANSI_BLUE + jugador1.getName() + " ha ganado al jugador " + jugador2.getName() + ". " + jugador1.getName() + " vuelve a su equipo y " + jugador2.getName() + " va al cementerio." + ANSI_RESET);
                 equipo1.put(selectedId1, jugador1);
                 cementerio1.put(selectedId2, jugador2);
             }
-        } if (hp1 == false) {
+        } if (!hp1) {
             if (hp2) {
+                System.out.println(ANSI_BLUE + jugador2.getName() + " ha ganado al jugador " + jugador1.getName() + ". " + jugador2.getName() + " vuelve a su equipo y " + jugador1.getName() + " va al cementerio." + ANSI_RESET);
                 equipo2.put(selectedId2, jugador2);
                 cementerio1.put(selectedId1, jugador1);
             }
-            if (hp2 == false) {
+            if (!hp2) {
+                System.out.println(ANSI_RED + jugador1.getName() + " y " + jugador2.getName() + "han muerto a la vez y van al cementerio." + ANSI_RESET);
                 cementerio1.put(selectedId1, jugador1);
                 cementerio1.put(selectedId2, jugador2);
             }
@@ -270,119 +291,130 @@ public class Game1 {
 
     /* Metodos auxiliares */
 
+    public void escribirCSV() throws IOException {
+        FileWriter writer = new FileWriter("partidaguardada.csv");
+        writer.write("Equipo,Type,Name,HP,Stamina / Mana,Strength / Intelligence\n");
 
+            for (Character jugador : equipo1.values()){
+                writer.write("1," + jugador.type + "," + jugador.getName()+","+ jugador.getHp()+","+jugador.getStaminaMana()+","+jugador.getStrengthIntelligence()+"\n");
+            }
+
+            for (Character jugador : equipo2.values()){
+                writer.write("2," + jugador.type + "," + jugador.getName()+","+ jugador.getHp()+","+jugador.getStaminaMana()+","+jugador.getStrengthIntelligence()+"\n");
+            }
+
+
+            for (Character jugador : cementerio1.values()){
+                writer.write("9," + jugador.type + "," + jugador.getName()+","+ jugador.getHp()+","+jugador.getStaminaMana()+","+jugador.getStrengthIntelligence()+"\n");
+            }
+
+        writer.close();
+    }
+
+    // Funcion para crear cada jugador custom
+    public HashMap<Integer, Character> CreateTeamCustom(int numEquipo, int election) {
+        HashMap<Integer, Character> equipo = new HashMap<>();
+        for (int i = 0; i < election; i++) {
+
+            System.out.println("Apunta los valores del jugador " + i + 1 + " del equipo" + 1);
+            Scanner scan2 = new Scanner(System.in);
+            String[] createCustomPlayer = scan2.nextLine().split("-");
+            String characterTypeCustom = createCustomPlayer[0];
+            int id = setId(numEquipo);
+            if (characterTypeCustom.toLowerCase().equals("m")) {
+                equipo.put(id, new Wizard(id, createCustomPlayer[1], Integer.parseInt(createCustomPlayer[2]), true, Integer.parseInt(createCustomPlayer[3]), Integer.parseInt(createCustomPlayer[4])));
+            } else if (characterTypeCustom.equalsIgnoreCase("g")) {
+                equipo.put(id, new Warrior(id, createCustomPlayer[1], Integer.parseInt(createCustomPlayer[2]), true, Integer.parseInt(createCustomPlayer[3]), Integer.parseInt(createCustomPlayer[4])));
+            }
+        }
+
+        return equipo;
+    }
+
+    public int randomPlayer(HashMap<Integer, Character> equipo){
+        ArrayList idsRand = new ArrayList<>();
+        for(Integer key : equipo.keySet()){
+            idsRand.add(key);
+        }
+        int random = (int)(Math.random() * idsRand.size());
+
+
+                return (int) idsRand.get(random);
+    }
     // Nombre repetido
 
-    /*public String changeName (HashMap equipo, String name){
-
-        for (String jugador : equipo.keySet()){
-
+    public String changeName (HashMap<Integer, Character> equipo, String name){
+        String chName = name;
+        for (Character jugador : equipo.values()){
+            if (name.equals(jugador.getName())){
+                chName = name + " Jr.";
+            }
         }
-
-        for (int i = 0; i < equipo.size(); i++){
-            equipo.get
-        }
-
-        return null;
-    }*/
+        return chName;
+    }
 
     //Metodo que hace todos los calculos random
     public int randomMethod(int [] value) {
         int maxValue=value[1];
         int minValue=value[0];
-        int result = (int)(Math.random()*(maxValue-minValue) + minValue);
-
-        return result;
-    }
-
-    // Metodos para crear la partida Custom
-    public ArrayList createTeams(int numChar, int numTeam){
-        System.out.println("Vamos a elegir los " + numChar + " jugadores del equipo " + numTeam + ".\n\n");
-        for (int i = 0; i < numChar; i++){
-            System.out.println("Nombre del jugador");
-            Scanner name = new Scanner(System.in);
-            name.nextLine();
-            System.out.println("\n¿Que tipo de jugador quieres que sea, Warrior o Wizard?");
-            Scanner scan1 = new Scanner(System.in);
-            String type = scan1.nextLine();
-            if (type == "Warrior") {
-                String msn = "\n¿Cuanto HP quieres que tenga? Valores entre 100-200.";
-                Scanner scan2 = new Scanner(System.in);
-                int hp = obtainInt(hpWarrior, scan2, msn);
-            } if (type == "Wizard"){
-                Scanner scan2 = new Scanner(System.in);
-                String msn = "\n¿Cuanto HP quieres que tenga? Valores entre 50-100.";
-                int hp =  obtainInt(hpWizard, scan2, msn);
-            }
-
-        }
-        return null;
-
-    }
-
-    // Metodo para revisar el integer en la entrada de datos custom
-    public int obtainInt (int [] value, Scanner scan, String mensaje) {
-        int maxValue = value[1];
-        int minValue = value[0];
-        int idx = 0;
-        int scanValue = 0;
-        int defaultValue = (maxValue + minValue) / 2;
-        while (true) {
-            System.out.println(mensaje);
-            if (scan.hasNextLine()) {
-                scanValue = scan.nextInt();
-                if (scanValue > minValue && scanValue < maxValue) {
-                    return scanValue;
-                } else if ((scanValue < minValue || scanValue > maxValue) && idx < 3) {
-                    System.err.println("Valor incorrecto. El valor debe estar comprendido entre " + minValue + " y " + maxValue + ".");
-                    obtainInt(value, scan, mensaje);
-                    idx++;
-                } else if (idx == 3) {
-                    System.err.println("Has cometido demasiados errores. Se pone un valor por defecto " + defaultValue + ".");
-                    return defaultValue;
-
-                }
-            } else {
-                System.err.println("No has escrito un número entero. Vuelve a repetir");
-                obtainInt(value, scan, mensaje);
-                idx++;
-            }
-        }
+        return (int)(Math.random()*(maxValue-minValue) + minValue);
     }
 
     //Metodo que printa los equipos
     public void printList1(HashMap equipo, int numTeam){
 
 
-        System.out.println("-----------------------------------------------------------------------------------------");
-        System.out.println("----------------------------- EQUIPO " + numTeam +" --------------------------------------------------");
-        System.out.printf("%5s %10s %10s %7s %15s %15s %5s", "ID", "TIPO", "NOMBRE", "HP", "STAMINA", "STRENGTH", "ESTA VIVO\n");
-        System.out.printf("%5s %10s %10s %7s %15s %15s %5s", "", "", "", "", "MANA", "INTELLIGENCE", "\n");
-        System.out.println("-----------------------------------------------------------------------------------------");
+        System.out.println("--------------------------------------------------------------------------------------");
+        System.out.println("----------------------------- EQUIPO " + numTeam +" -----------------------------------------------");
+        System.out.printf("%5s %10s %15s %7s %15s %15s %5s", "ID", "TIPO", "NOMBRE", "HP", "STAMINA", "STRENGTH", "ESTA VIVO\n");
+        System.out.printf("%5s %10s %15s %7s %15s %15s %5s", "", "", "", "", "MANA", "INTELLIGENCE", "\n");
+        System.out.println("--------------------------------------------------------------------------------------");
         for (Object jugador: equipo.values()){
-            System.out.printf("%5s %10s %10s %7s %15s %15s %10s", ((Character) jugador).getId(), ((Character) jugador).type, ((Character) jugador).getName(),((Character) jugador).getHp(), ((Character) jugador).getStaminaMana(), ((Character) jugador).getStrengthIntelligence(), ((Character) jugador).isAlive+ "\n");
+            System.out.printf("%5s %10s %15s %7s %15s %15s %10s", ((Character) jugador).getId(), ((Character) jugador).type, ((Character) jugador).getName(),((Character) jugador).getHp(), ((Character) jugador).getStaminaMana(), ((Character) jugador).getStrengthIntelligence(), "Vivito y coleando" + "\n");
         }
-        System.out.println("-----------------------------------------------------------------------------------------");
-        System.out.println("\n\n");
+        System.out.println("--------------------------------------------------------------------------------------\n");
+
 
     }
+    public void printCementerio1(HashMap equipo){
 
-    public void printRound1(Character character, int numTeam){
-        if (character.isAlive){
-
+        System.out.println(ANSI_RED + "----------------------------------------------------------------------------------------");
+        System.out.println("----------------------------- CEMENTERIO -----------------------------------------------");
+        System.out.printf("%5s %10s %15s %7s %15s %15s %5s", "ID", "TIPO", "NOMBRE", "HP", "STAMINA", "STRENGTH", "ESTA VIVO\n");
+        System.out.printf("%5s %10s %15s %7s %15s %15s %5s", "", "", "", "", "MANA", "INTELLIGENCE", "\n");
+        System.out.println("-----------------------------------------------------------------------------------------");
+        for (Object jugador: equipo.values()){
+            System.out.printf("%5s %10s %15s %7s %15s %15s %10s", ((Character) jugador).getId(), ((Character) jugador).type, ((Character) jugador).getName(),((Character) jugador).getHp(), ((Character) jugador).getStaminaMana(), ((Character) jugador).getStrengthIntelligence(), "Criando malvas"+ "\n");
         }
-        if (character.type.equals("warrior")) {
-            System.out.println("----------------------------- JUGADOR: " + character.getName() + " tiene estos valores--------------------------------------------------");
-            System.out.println("-----------------------------------------------------------------------------------------");
-            System.out.printf(" %10s  %7s %15s %15s %10s", character.type.toString(), "HP: " + character.getHp(), "Stramina: " + character.getStaminaMana(), "Strength: " + character.getStrengthIntelligence(), character.isAlive + "\n");
-            System.out.println("-----------------------------------------------------------------------------------------\n");
-        } else if(character.type.equals("wizard")) {
-            System.out.println("----------------------------- JUGADOR: " + character.getName() + " tiene estos valores--------------------------------------------------");
-            System.out.println("-----------------------------------------------------------------------------------------");
-            System.out.printf(" %10s  %7s %15s %15s %10s", character.type.toString(), "HP: " + character.getHp(), "Stramina: " + character.getStaminaMana(), "Strength: " + character.getStrengthIntelligence(), character.isAlive + "\n");
-            System.out.println("-----------------------------------------------------------------------------------------\n");
-        }
+        System.out.println("-----------------------------------------------------------------------------------------\n"+ ANSI_RESET);
+    }
 
+    public void printRound1(Character character, int numTeam, String type){
+        if(character.isAlive) {
+            if (type.equals("warrior")) {
+                System.out.println("-------------------- " + character.getName() + " del equipo " + numTeam + " tiene estos valores ---------------------");
+                System.out.println("--------------------------------------------------------------------------------------");
+                System.out.printf(" %10s  %7s %15s %15s %10s", character.type.toString(), "HP: " + character.getHp(), "Stramina: " + character.getStaminaMana(), "Strength: " + character.getStrengthIntelligence(), "Sigue vivo" + "\n");
+                System.out.println("--------------------------------------------------------------------------------------\n");
+            } else if (type.equals("wizard")) {
+                System.out.println("-------------------- " + character.getName() + " del equipo " + numTeam + " tiene estos valores ---------------------");
+                System.out.println("--------------------------------------------------------------------------------------");
+                System.out.printf(" %10s  %7s %15s %15s %10s", character.type.toString(), "HP: " + character.getHp(), "Stramina: " + character.getStaminaMana(), "Strength: " + character.getStrengthIntelligence(), "Sigue vivo" + "\n");
+                System.out.println("--------------------------------------------------------------------------------------\n");
+            }
+        } else if (!character.isAlive) {
+            if (type.equals("warrior")) {
+                System.out.println("-------------------- " + character.getName() + " del equipo " + numTeam + " tiene estos valores ---------------------");
+                System.out.println("--------------------------------------------------------------------------------------");
+                System.out.printf(" %10s  %7s %15s %15s %10s", character.type.toString(), "HP: " + character.getHp(), "Stramina: " + character.getStaminaMana(), "Strength: " + character.getStrengthIntelligence(), ANSI_RED +"Ha muerto" +ANSI_RESET+ "\n");
+                System.out.println("--------------------------------------------------------------------------------------\n");
+            } else if (type.equals("wizard")) {
+                System.out.println("-------------------- " + character.getName() + " del equipo " + numTeam + " tiene estos valores ---------------------");
+                System.out.println("--------------------------------------------------------------------------------------");
+                System.out.printf(" %10s  %7s %15s %15s %10s", character.type.toString(), "HP: " + character.getHp(), "Stramina: " + character.getStaminaMana(), "Strength: " + character.getStrengthIntelligence(), ANSI_RED +"Ha muerto" +ANSI_RESET+ "\n");
+                System.out.println("--------------------------------------------------------------------------------------\n");
+            }
+        }
     }
 
 
