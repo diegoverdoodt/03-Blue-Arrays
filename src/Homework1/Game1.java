@@ -16,7 +16,7 @@ public class Game1 {
 
     private final String[] namesWarriors = {"Warrior 1","Warrior 2","Warrior 3","Warrior 4","Warrior 5","Warrior 6","Warrior 7","Warrior 8","Warrior 9","Warrior 10"};
     private final String[] namesWizards = {"Wizard 1","Wizard 2","Wizard 3","Wizard 4","Wizard 5","Wizard 6","Wizard 7","Wizard 8","Wizard 9","Wizard 10"};
-    int maxPlayers = 50;
+    int maxPlayers = 20;
     private int idx = 0;
     String[] characterType = new String[]{"warrior", "wizard"};
     int[] hpWarrior = new int[]{100, 200};
@@ -315,10 +315,22 @@ public class Game1 {
     public HashMap<Integer, Character> CreateTeamCustom(int numEquipo, int election) {
         HashMap<Integer, Character> equipo = new HashMap<>();
         for (int i = 0; i < election; i++) {
-
-            System.out.println("Apunta los valores del jugador " + i + 1 + " del equipo" + 1);
+            int playerNum = i +1;
+            System.out.println("Apunta los valores del jugador " + playerNum + " del equipo" + 1);
             Scanner scan2 = new Scanner(System.in);
             String[] createCustomPlayer = scan2.nextLine().split("-");
+            //funcion para revisar el String de arriba
+                //primera condicion de la funcion
+                /*if (createCustomPlayer[0].toLowerCase() != "m" || createCustomPlayer[0].toLowerCase() != "g"){
+                    System.err.println("No has elegido bien el tipo de jugador. Tiene que ser M o G");
+                    Scanner scan3 = new Scanner(System.in);
+                    createCustomPlayer = scan3.nextLine().split("-");
+                }*/
+                //segunda condicion de la funcion
+                //if (createCustomPlayer[2] - valores de HP
+                //if (createCustomPlayer[3] - valores de Mana / Stamina
+                //if (createCustomPlayer[4] - valores de Strength / Intelligence
+
             String characterTypeCustom = createCustomPlayer[0];
             int id = setId(numEquipo);
             if (characterTypeCustom.toLowerCase().equals("m")) {
