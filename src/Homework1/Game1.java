@@ -321,11 +321,12 @@ public class Game1 {
             String[] createCustomPlayer = scan2.nextLine().split("-");
             //funcion para revisar el String de arriba
                 //primera condicion de la funcion
-                /*if (createCustomPlayer[0].toLowerCase() != "m" || createCustomPlayer[0].toLowerCase() != "g"){
+               if (!createCustomPlayer[0].equalsIgnoreCase("m") && !createCustomPlayer[0].equalsIgnoreCase("g")){
                     System.err.println("No has elegido bien el tipo de jugador. Tiene que ser M o G");
                     Scanner scan3 = new Scanner(System.in);
                     createCustomPlayer = scan3.nextLine().split("-");
-                }*/
+                }
+
                 //segunda condicion de la funcion
                 //if (createCustomPlayer[2] - valores de HP
                 //if (createCustomPlayer[3] - valores de Mana / Stamina
@@ -333,7 +334,7 @@ public class Game1 {
 
             String characterTypeCustom = createCustomPlayer[0];
             int id = setId(numEquipo);
-            if (characterTypeCustom.toLowerCase().equals("m")) {
+            if (characterTypeCustom.equalsIgnoreCase("m")) {
                 equipo.put(id, new Wizard(id, createCustomPlayer[1], Integer.parseInt(createCustomPlayer[2]), true, Integer.parseInt(createCustomPlayer[3]), Integer.parseInt(createCustomPlayer[4])));
             } else if (characterTypeCustom.equalsIgnoreCase("g")) {
                 equipo.put(id, new Warrior(id, createCustomPlayer[1], Integer.parseInt(createCustomPlayer[2]), true, Integer.parseInt(createCustomPlayer[3]), Integer.parseInt(createCustomPlayer[4])));
