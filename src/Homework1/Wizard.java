@@ -44,11 +44,39 @@ public class Wizard extends Character implements Attacker{
         if (wizard.getMana() >= 5) {
             character.setHp(character.getHp()-wizard.getIntelligence());
             wizard.setMana(wizard.getMana()-FIREBALLLESSMANA);
+            try {
+                //Ponemos a "Dormir" el programa durante los ms que queremos
+                Thread.sleep(2*1000);
+            }
+            catch (Exception e) {
+                System.out.println(e);
+            }
             System.out.println(wizard.getName() + " lanza una Bola de Fuego a su oponente. Le ha quitado " + wizard.getIntelligence() + " puntos de vida.");
+            try {
+                //Ponemos a "Dormir" el programa durante los ms que queremos
+                Thread.sleep(1*1000);
+            }
+            catch (Exception e) {
+                System.out.println(e);
+            }
         }else if (wizard.getMana() < 5) {
             character.setHp(character.getHp()- 2);
             wizard.setMana(wizard.getMana()+STAFFHITMOREMANA);
+            try {
+                //Ponemos a "Dormir" el programa durante los ms que queremos
+                Thread.sleep(2*1000);
+            }
+            catch (Exception e) {
+                System.out.println(e);
+            }
             System.out.println(wizard.getName() + " bastonea a su oponente. Le ha quitado " + 2 + " puntos de vida.");
+            try {
+                //Ponemos a "Dormir" el programa durante los ms que queremos
+                Thread.sleep(1*1000);
+            }
+            catch (Exception e) {
+                System.out.println(e);
+            }
         }
     }
 }
