@@ -28,6 +28,7 @@ public class Game1 {
     private int selectedId2;
     private int randId1;
     private int randId2;
+    private String[] createCustomPlayer;
 
     HashMap<Integer, Character> equipo1 = new HashMap<>();
     HashMap<Integer, Character> equipo2 = new HashMap<>();
@@ -173,44 +174,46 @@ public class Game1 {
     public void playGame1(HashMap equipo1, HashMap equipo2) {
 
         if (equipo1.size() > 0 && equipo2.size() > 0) {
-            String name1 = null, name2 = null;
-            HashMap<Integer, Character> jugador1 = new HashMap<>();
-            HashMap<Integer, Character> jugador2 = new HashMap<>();
-            System.out.println( "ID  Elige el jugador del Equipo 1 por su ID    Teclea el ID\n" +
-                                "0   Elige un jugador de manera aleatoria       Teclea 0");
-            Scanner scan1 = new Scanner(System.in);
-            selectedId1 = scan1.nextInt();
+            String name1, name2;
+            HashMap<Integer, Character> jugador1;
+            HashMap<Integer, Character> jugador2;
 
-            if(selectedId1 == 0){
-                randId1 = randomPlayer(equipo1);
+                System.out.println("ID  Elige el jugador del Equipo 1 por su ID    Teclea el ID\n" +
+                        "0   Elige un jugador de manera aleatoria       Teclea 0");
+                Scanner scan1 = new Scanner(System.in);
+                selectedId1 = scan1.nextInt();
 
-                jugador1 = getJugador(equipo1, randId1);
-                name1 = jugador1.get(randId1).getName();
-                selectedId1 = randId1;
-            } else {
-                //Revisar si el numero es correcto
-                jugador1 = getJugador(equipo1, selectedId1);
-                name1 = jugador1.get(selectedId1).getName();
-            }
-            System.out.println("ID  Elige el jugador del Equipo 2 por su ID    Teclea el ID\n" +
-                    "0   Elige un jugador de manera aleatoria       Teclea 0");
-            Scanner scan2 = new Scanner(System.in);
-            selectedId2 = scan2.nextInt();
+                if (selectedId1 == 0) {
+                    randId1 = randomPlayer(equipo1);
 
-            if(selectedId2 == 0){
+                    jugador1 = getJugador(equipo1, randId1);
+                    name1 = jugador1.get(randId1).getName();
+                    selectedId1 = randId1;
+                } else {
+                    //Revisar si el numero es correcto
+                    jugador1 = getJugador(equipo1, selectedId1);
+                    name1 = jugador1.get(selectedId1).getName();
+                }
+                System.out.println("ID  Elige el jugador del Equipo 2 por su ID    Teclea el ID\n" +
+                        "0   Elige un jugador de manera aleatoria       Teclea 0");
+                Scanner scan2 = new Scanner(System.in);
+                selectedId2 = scan2.nextInt();
 
-                randId2 = randomPlayer(equipo2);
-                jugador2 = getJugador(equipo2, randId2);
-                name2 = jugador2.get(randId2).getName();
-                selectedId2 = randId2;
-            } else {
-                //Revisar si el numero es correcto
+                if (selectedId2 == 0) {
 
-                //Metodo para escoger random al jugador entre los IDs que haya en el equipo
-                jugador2 = getJugador(equipo2, selectedId2);
-                name2 = jugador2.get(selectedId2).getName();
-            }
-            System.out.println("Comienza la lucha entre " + name1 + " y " + name2 + ".");
+                    randId2 = randomPlayer(equipo2);
+                    jugador2 = getJugador(equipo2, randId2);
+                    name2 = jugador2.get(randId2).getName();
+                    selectedId2 = randId2;
+                } else {
+                    //Revisar si el numero es correcto
+
+                    //Metodo para escoger random al jugador entre los IDs que haya en el equipo
+                    jugador2 = getJugador(equipo2, selectedId2);
+                    name2 = jugador2.get(selectedId2).getName();
+                }
+                System.out.println("Comienza la lucha entre " + name1 + " y " + name2 + ".");
+
             printList1(jugador1, 1);
             printList1(jugador2, 2);
 
@@ -224,7 +227,7 @@ public class Game1 {
 
             playGame1(equipo1, equipo2);
 
-        } else if (equipo1.size() > 0 && equipo2.size() <= 0){
+        } else if (equipo1.size() > 0 && equipo2.size() < 1){
             System.out.println(ANSI_BLUE+"El equipo 1 ha ganado el juego"+ANSI_RESET);
         } else {
             System.out.println(ANSI_BLUE+"El equipo 2 ha ganado el juego"+ANSI_RESET);
@@ -243,7 +246,6 @@ public class Game1 {
         String guardar = scan1.nextLine().toLowerCase();
 
         if (guardar.equals("y")) {
-            //EscribirCSV
             try {
                 escribirCSV();
                 }
@@ -272,18 +274,18 @@ public class Game1 {
                 printRound1(jugador2, 2, type2);
                 round(jugador1, jugador2);
             } if (!hp2){
-                System.out.println(ANSI_BLUE + jugador1.getName() + " ha ganado al jugador " + jugador2.getName() + ". " + jugador1.getName() + " vuelve a su equipo y " + jugador2.getName() + " va al cementerio." + ANSI_RESET);
+                System.out.println(ANSI_BLUE + jugador1.getName() + " ha ganado al jugador " + jugador2.getName() + ". " + jugador1.getName() + " vuelve a su equipo y "+ ANSI_RED + jugador2.getName() + " va al cementerio." + ANSI_RESET);
                 equipo1.put(selectedId1, jugador1);
                 cementerio1.put(selectedId2, jugador2);
             }
         } if (!hp1) {
             if (hp2) {
-                System.out.println(ANSI_BLUE + jugador2.getName() + " ha ganado al jugador " + jugador1.getName() + ". " + jugador2.getName() + " vuelve a su equipo y " + jugador1.getName() + " va al cementerio." + ANSI_RESET);
+                System.out.println(ANSI_BLUE + jugador2.getName() + " ha ganado al jugador " + jugador1.getName() + ". " + jugador2.getName() + " vuelve a su equipo y "+ ANSI_RED + jugador1.getName() + " va al cementerio." + ANSI_RESET);
                 equipo2.put(selectedId2, jugador2);
                 cementerio1.put(selectedId1, jugador1);
             }
             if (!hp2) {
-                System.out.println(ANSI_RED + jugador1.getName() + " y " + jugador2.getName() + "han muerto a la vez y van al cementerio." + ANSI_RESET);
+                System.out.println(ANSI_RED + jugador1.getName() + " y " + jugador2.getName() + " han muerto a la vez y van al cementerio." + ANSI_RESET);
                 cementerio1.put(selectedId1, jugador1);
                 cementerio1.put(selectedId2, jugador2);
             }
@@ -318,16 +320,23 @@ public class Game1 {
         HashMap<Integer, Character> equipo = new HashMap<>();
         for (int i = 0; i < election; i++) {
             int playerNum = i +1;
-            System.out.println("Apunta los valores del jugador " + playerNum + " del equipo" + 1);
+            System.out.println("Apunta los valores del jugador " + playerNum + " del equipo " + numEquipo);
+
+            createCustomPlayerFunction(playerNum, numEquipo);
+/*
             Scanner scan2 = new Scanner(System.in);
             String[] createCustomPlayer = scan2.nextLine().split("-");
             //formato ejemplo para posicion en array; M-Nombre-Vida-Mana-Inteligencia - g-Merlin-75-15-0
                 //Funcion para devolver error si no es M o G (ignora mayusculas)
-               if (!createCustomPlayer[0].equalsIgnoreCase("m") && !createCustomPlayer[0].equalsIgnoreCase("g")){
+            if (createCustomPlayer.length < 5) {
+
+
+                if (!createCustomPlayer[0].equalsIgnoreCase("m") && !createCustomPlayer[0].equalsIgnoreCase("g")) {
                     System.err.println("No has elegido bien el tipo de jugador. Tiene que ser M o G");
                     Scanner scan3 = new Scanner(System.in);
                     createCustomPlayer = scan3.nextLine().split("-");
                 }
+            }
 
                 //Funcion para que Mana y Stamina estén en rango
                if (Integer.parseInt(createCustomPlayer[3]) < 10){
@@ -343,24 +352,24 @@ public class Game1 {
 
                //Funcion para que Inteligencia de Mago esté en reango
                 if (createCustomPlayer[0].equalsIgnoreCase("m") && Integer.parseInt(createCustomPlayer[4]) < 10){
-                    System.err.println("El valor de Inteligencia elejido esta fuera del rango permitido. Escoge un valor entre 10 y 50");
+                    System.err.println("El valor de Inteligencia elegido esta fuera del rango permitido. Escoge un valor entre 10 y 50");
                     Scanner scan6 = new Scanner(System.in);
                     createCustomPlayer = scan6.nextLine().split("-");
                 }
                 if (createCustomPlayer[0].equalsIgnoreCase("m") && Integer.parseInt(createCustomPlayer[4]) > 50){
-                    System.err.println("El valor de Inteligencia elejido esta fuera del rango permitido. Escoge un valor entre 10 y 50");
+                    System.err.println("El valor de Inteligencia elegido esta fuera del rango permitido. Escoge un valor entre 10 y 50");
                     Scanner scan7 = new Scanner(System.in);
                     createCustomPlayer = scan7.nextLine().split("-");
                 }
 
                 //Funcion para que Fuerza de Gerrero esté en reango
                 if (createCustomPlayer[0].equalsIgnoreCase("g") && Integer.parseInt(createCustomPlayer[4]) < 1){
-                    System.err.println("El valor de Fuerza elejido esta fuera del rango permitido. Escoge un valor entre 1 y 10");
+                    System.err.println("El valor de Fuerza elegido esta fuera del rango permitido. Escoge un valor entre 1 y 10");
                     Scanner scan8 = new Scanner(System.in);
                     createCustomPlayer = scan8.nextLine().split("-");
                 }
                 if (createCustomPlayer[0].equalsIgnoreCase("g") && Integer.parseInt(createCustomPlayer[4]) > 10){
-                    System.err.println("El valor de Fuerza elejido esta fuera del rango permitido. Escoge un valor entre 1 y 10");
+                    System.err.println("El valor de Fuerza eleigdo esta fuera del rango permitido. Escoge un valor entre 1 y 10");
                     Scanner scan9 = new Scanner(System.in);
                     createCustomPlayer = scan9.nextLine().split("-");
                 }
@@ -370,7 +379,7 @@ public class Game1 {
                 //if (createCustomPlayer[2] - valores de HP
                 //if (createCustomPlayer[3] - valores de Mana / Stamina
                 //if (createCustomPlayer[4] - valores de Strength  Intelligence
-
+*/
             String characterTypeCustom = createCustomPlayer[0];
             int id = setId(numEquipo);
             if (characterTypeCustom.equalsIgnoreCase("m")) {
@@ -381,6 +390,57 @@ public class Game1 {
         }
 
         return equipo;
+    }
+
+    public void createCustomPlayerFunction(int playerNum, int numEquipo){
+
+        Scanner scan2 = new Scanner(System.in);
+        createCustomPlayer = scan2.nextLine().split("-");
+        //formato ejemplo para posicion en array; M-Nombre-Vida-Mana-Inteligencia - g-Merlin-75-15-0
+        //Funcion para devolver error si no es M o G (ignora mayusculas)
+        if (createCustomPlayer.length < 5) {
+            System.err.println("Revisa los datos que has introducido. Falta algun parámetro");
+            System.out.println("Apunta los valores del jugador " + playerNum + " del equipo " + numEquipo);
+            createCustomPlayerFunction(playerNum, numEquipo);
+        } else {
+            if (!createCustomPlayer[0].equalsIgnoreCase("m") && !createCustomPlayer[0].equalsIgnoreCase("g")) {
+                System.err.println("No has elegido bien el tipo de jugador. Tiene que ser M o G");
+                System.out.println("Apunta los valores del jugador " + playerNum + " del equipo " + numEquipo);
+                createCustomPlayerFunction(playerNum, numEquipo);
+            }
+            if (createCustomPlayer[0].equalsIgnoreCase("g") && (Integer.parseInt(createCustomPlayer[2]) < hpWarrior[0] || Integer.parseInt(createCustomPlayer[2]) > hpWarrior[1])) {
+                System.err.println("El valor de Fuerza elegido esta fuera del rango permitido. Escoge un valor entre "+ hpWarrior[0] + " y " + hpWarrior[1]);
+                System.out.println("Apunta los valores del jugador " + playerNum + " del equipo " + numEquipo);
+                createCustomPlayerFunction(playerNum, numEquipo);
+            }
+            if (createCustomPlayer[0].equalsIgnoreCase("m") && (Integer.parseInt(createCustomPlayer[2]) < hpWizard[0] || Integer.parseInt(createCustomPlayer[2]) > hpWizard[1])) {
+                System.err.println("El valor de Fuerza elegido esta fuera del rango permitido. Escoge un valor entre "+ hpWizard[0] + " y " + hpWizard[1]);
+                System.out.println("Apunta los valores del jugador " + playerNum + " del equipo " + numEquipo);
+                createCustomPlayerFunction(playerNum, numEquipo);
+            }
+
+
+            //Funcion para que Mana y Stamina estén en rango
+            if (Integer.parseInt(createCustomPlayer[3]) < staminaMana[0] ||Integer.parseInt(createCustomPlayer[3]) > staminaMana[1] ) {
+                System.err.println("El valor de Mana o Stamina elegido esta fuera del rango permitido. Escoge un valor entre "+ staminaMana[0] + " y " + staminaMana[1]);
+                System.out.println("Apunta los valores del jugador " + playerNum + " del equipo " + numEquipo);
+                createCustomPlayerFunction(playerNum, numEquipo);
+            }
+
+            //Funcion para que Inteligencia de Mago esté en reango
+            if (createCustomPlayer[0].equalsIgnoreCase("m") && (Integer.parseInt(createCustomPlayer[4]) < intelligence[0] || Integer.parseInt(createCustomPlayer[4]) > intelligence[1])) {
+                System.err.println("El valor de Inteligencia elegido esta fuera del rango permitido. Escoge un valor entre "+ intelligence[0] + " y " + intelligence[1]);
+                System.out.println("Apunta los valores del jugador " + playerNum + " del equipo " + numEquipo);
+                createCustomPlayerFunction(playerNum, numEquipo);
+            }
+
+            //Funcion para que Fuerza de Gerrero esté en reango
+            if (createCustomPlayer[0].equalsIgnoreCase("g") && (Integer.parseInt(createCustomPlayer[4]) < strength[0] || Integer.parseInt(createCustomPlayer[4]) > strength[1])) {
+                System.err.println("El valor de Fuerza elegido esta fuera del rango permitido. Escoge un valor entre" + strength[0] + " y " + strength[1]);
+                System.out.println("Apunta los valores del jugador " + playerNum + " del equipo " + numEquipo);
+                createCustomPlayerFunction(playerNum, numEquipo);
+            }
+        }
     }
 
     public int randomPlayer(HashMap<Integer, Character> equipo){
@@ -427,6 +487,7 @@ public class Game1 {
         System.out.println("--------------------------------------------------------------------------------------\n");
 
 
+
     }
     public void printCementerio1(HashMap equipo){
 
@@ -446,24 +507,24 @@ public class Game1 {
             if (type.equals("warrior")) {
                 System.out.println("-------------------- " + character.getName() + " del equipo " + numTeam + " tiene estos valores ---------------------");
                 System.out.println("--------------------------------------------------------------------------------------");
-                System.out.printf(" %10s  %7s %15s %15s %10s", character.type.toString(), "HP: " + character.getHp(), "Stramina: " + character.getStaminaMana(), "Strength: " + character.getStrengthIntelligence(), "Sigue vivo" + "\n");
+                System.out.printf(" %10s  %7s %15s %15s %10s", character.type.toString(), "HP: " + character.getHp(), "Stamina: " + character.getStaminaMana(), "Strength: " + character.getStrengthIntelligence(), "Sigue vivo" + "\n");
                 System.out.println("--------------------------------------------------------------------------------------\n");
             } else if (type.equals("wizard")) {
                 System.out.println("-------------------- " + character.getName() + " del equipo " + numTeam + " tiene estos valores ---------------------");
                 System.out.println("--------------------------------------------------------------------------------------");
-                System.out.printf(" %10s  %7s %15s %15s %10s", character.type.toString(), "HP: " + character.getHp(), "Stramina: " + character.getStaminaMana(), "Strength: " + character.getStrengthIntelligence(), "Sigue vivo" + "\n");
+                System.out.printf(" %10s  %7s %15s %15s %10s", character.type.toString(), "HP: " + character.getHp(), "Mana: " + character.getStaminaMana(), "Intelligence: " + character.getStrengthIntelligence(), "Sigue vivo" + "\n");
                 System.out.println("--------------------------------------------------------------------------------------\n");
             }
         } else if (!character.isAlive) {
             if (type.equals("warrior")) {
                 System.out.println("-------------------- " + character.getName() + " del equipo " + numTeam + " tiene estos valores ---------------------");
                 System.out.println("--------------------------------------------------------------------------------------");
-                System.out.printf(" %10s  %7s %15s %15s %10s", character.type.toString(), "HP: " + character.getHp(), "Stramina: " + character.getStaminaMana(), "Strength: " + character.getStrengthIntelligence(), ANSI_RED +"Ha muerto" +ANSI_RESET+ "\n");
+                System.out.printf(" %10s  %7s %15s %15s %10s", character.type.toString(), "HP: " + character.getHp(), "Stamina: " + character.getStaminaMana(), "Strength: " + character.getStrengthIntelligence(), ANSI_RED +"Ha muerto" +ANSI_RESET+ "\n");
                 System.out.println("--------------------------------------------------------------------------------------\n");
             } else if (type.equals("wizard")) {
                 System.out.println("-------------------- " + character.getName() + " del equipo " + numTeam + " tiene estos valores ---------------------");
                 System.out.println("--------------------------------------------------------------------------------------");
-                System.out.printf(" %10s  %7s %15s %15s %10s", character.type.toString(), "HP: " + character.getHp(), "Stramina: " + character.getStaminaMana(), "Strength: " + character.getStrengthIntelligence(), ANSI_RED +"Ha muerto" +ANSI_RESET+ "\n");
+                System.out.printf(" %10s  %7s %15s %15s %10s", character.type.toString(), "HP: " + character.getHp(), "Mana: " + character.getStaminaMana(), "Intelligence: " + character.getStrengthIntelligence(), ANSI_RED +"Ha muerto" +ANSI_RESET+ "\n");
                 System.out.println("--------------------------------------------------------------------------------------\n");
             }
         }

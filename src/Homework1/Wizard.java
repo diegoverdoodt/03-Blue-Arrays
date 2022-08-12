@@ -4,7 +4,7 @@ public class Wizard extends Character implements Attacker{
 
     private int mana, intelligence;
     public static final int FIREBALLLESSMANA = 5;
-    public static final int STAFFHITMOREMANA = 2;
+    public static final int STAFFHITMOREMANA = 1;
 
     public Wizard(int id, String name, int hp, boolean isAlive, int mana, int intelligence) {
         super(id, name, hp, isAlive);
@@ -44,39 +44,15 @@ public class Wizard extends Character implements Attacker{
         if (wizard.getMana() >= 5) {
             character.setHp(character.getHp()-wizard.getIntelligence());
             wizard.setMana(wizard.getMana()-FIREBALLLESSMANA);
-            try {
-                //Ponemos a "Dormir" el programa durante los ms que queremos
-                Thread.sleep(2*1000);
-            }
-            catch (Exception e) {
-                System.out.println(e);
-            }
+            pause();
             System.out.println(wizard.getName() + " lanza una Bola de Fuego a su oponente. Le ha quitado " + wizard.getIntelligence() + " puntos de vida.");
-            try {
-                //Ponemos a "Dormir" el programa durante los ms que queremos
-                Thread.sleep(1*1000);
-            }
-            catch (Exception e) {
-                System.out.println(e);
-            }
+            pause();
         }else if (wizard.getMana() < 5) {
             character.setHp(character.getHp()- 2);
             wizard.setMana(wizard.getMana()+STAFFHITMOREMANA);
-            try {
-                //Ponemos a "Dormir" el programa durante los ms que queremos
-                Thread.sleep(2*1000);
-            }
-            catch (Exception e) {
-                System.out.println(e);
-            }
+            pause();
             System.out.println(wizard.getName() + " bastonea a su oponente. Le ha quitado " + 2 + " puntos de vida.");
-            try {
-                //Ponemos a "Dormir" el programa durante los ms que queremos
-                Thread.sleep(1*1000);
-            }
-            catch (Exception e) {
-                System.out.println(e);
-            }
+            pause();
         }
     }
 }

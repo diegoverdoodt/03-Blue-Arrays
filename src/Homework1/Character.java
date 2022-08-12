@@ -63,8 +63,18 @@ public abstract class Character implements Attacker {
         return value2;
     }
 
+    public void pause(){
+        try {
+            //Ponemos a "Dormir" el programa durante los ms que queremos
+            Thread.sleep(500);
+        }
+        catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
     public void attack(Character character1, Character character2){
-        String type1 = character1.type.toLowerCase();;
+        String type1 = character1.type.toLowerCase();
         String type2 = character2.type.toLowerCase();
 
         if (type1.equals("warrior")) {

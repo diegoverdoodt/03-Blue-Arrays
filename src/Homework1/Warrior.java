@@ -1,7 +1,5 @@
 package Homework1;
 
-import java.util.ArrayList;
-
 public class Warrior extends Character implements Attacker {
 
     private int stamina, strength;
@@ -48,39 +46,15 @@ public class Warrior extends Character implements Attacker {
         if(warrior.getStamina() >= 5){
             character.setHp(character.getHp()-warrior.getStrength());
             warrior.setStamina(warrior.getStamina()-HEAVYATTACKLESSSTAMINA);
-            try {
-                //Ponemos a "Dormir" el programa durante los ms que queremos
-                Thread.sleep(2*1000);
-            }
-            catch (Exception e) {
-                System.out.println(e);
-            }
+            pause();
             System.out.println(warrior.getName() + " lanza un ataque terrible. Le quita a su oponente " + warrior.getStrength() + " puntos de vida");
-            try {
-                //Ponemos a "Dormir" el programa durante los ms que queremos
-                Thread.sleep(1*1000);
-            }
-            catch (Exception e) {
-                System.out.println(e);
-            }
+            pause();
         } else if (warrior.getStamina() < 5) {
-            character.setHp(character.getHp()-(int)warrior.getStrength()/2);
+            character.setHp(character.getHp()-warrior.getStrength()/2);
             warrior.setStamina(warrior.getStamina()+WEAKATTACKMORESTAMINA);
-            try {
-                //Ponemos a "Dormir" el programa durante los ms que queremos
-                Thread.sleep(2*1000);
-            }
-            catch (Exception e) {
-                System.out.println(e);
-            }
-            System.out.println(warrior.getName() + " lanza un ataque debil. Esta cansado. Le quita a su oponente " + (int)warrior.getStrength()/2 + " puntos de vida ");
-            try {
-                //Ponemos a "Dormir" el programa durante los ms que queremos
-                Thread.sleep(1*1000);
-            }
-            catch (Exception e) {
-                System.out.println(e);
-            }
+            pause();
+            System.out.println(warrior.getName() + " lanza un ataque debil. Esta cansado. Le quita a su oponente " + warrior.getStrength()/2 + " puntos de vida ");
+            pause();
         }
     }
 }
