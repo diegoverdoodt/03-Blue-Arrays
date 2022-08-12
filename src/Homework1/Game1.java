@@ -149,11 +149,13 @@ public class Game1 {
                 "   Vida (valores entre 50 y 100),\n" +
                 "   Mana ( valores de 10 a 50),\n" +
                 "   Inteligencia (valores de 1 a 50)\n\n" +
+                "   Formato para Mago : " +  ANSI_BLUE + "M-Nombre-Vida-Mana-Inteligencia\n\n" + ANSI_RESET +
                 "Para los Guerreros debes introducir los siguientes valores\n" +
                 "   Nombre\n" +
                 "   Vida (valores entre 100 y 200,\n" +
                 "   Stamina (valores entre 10 y 50),\n" +
                 "   Fuerza (valores entre 1 y 10)\n\n" +
+                "   Formato para Gerrero : " +  ANSI_BLUE + "G-Nombre-Vida-Stamina-Fuerza\n\n" + ANSI_RESET +
                 "Ejemplos:\n"+
                 "   Crear un Mago:          "+  ANSI_BLUE +"M-Merlin-75-40-35" + ANSI_RESET + "\n" +
                 "   Crear un Guerrero:      "+  ANSI_BLUE +"G-Atila-150-35-7" + ANSI_RESET + "\n");
@@ -319,18 +321,55 @@ public class Game1 {
             System.out.println("Apunta los valores del jugador " + playerNum + " del equipo" + 1);
             Scanner scan2 = new Scanner(System.in);
             String[] createCustomPlayer = scan2.nextLine().split("-");
-            //funcion para revisar el String de arriba
-                //primera condicion de la funcion
+            //formato ejemplo para posicion en array; M-Nombre-Vida-Mana-Inteligencia - g-Merlin-75-15-0
+                //Funcion para devolver error si no es M o G (ignora mayusculas)
                if (!createCustomPlayer[0].equalsIgnoreCase("m") && !createCustomPlayer[0].equalsIgnoreCase("g")){
                     System.err.println("No has elegido bien el tipo de jugador. Tiene que ser M o G");
                     Scanner scan3 = new Scanner(System.in);
                     createCustomPlayer = scan3.nextLine().split("-");
                 }
 
+                //Funcion para que Mana y Stamina estén en rango
+               if (Integer.parseInt(createCustomPlayer[3]) < 10){
+                   System.err.println("El valor de Mana o Stasmina elejido esta fuera del rango permitido. Escoge un valor entre 10 y 50");
+                   Scanner scan4 = new Scanner(System.in);
+                   createCustomPlayer = scan4.nextLine().split("-");
+               }
+               if (Integer.parseInt(createCustomPlayer[3]) > 50){
+                   System.err.println("El valor de Mana o Stasmina elejido esta fuera del rango permitido. Escoge un valor entre 10 y 50");
+                   Scanner scan5 = new Scanner(System.in);
+                   createCustomPlayer = scan5.nextLine().split("-");
+               }
+
+               //Funcion para que Inteligencia de Mago esté en reango
+                if (createCustomPlayer[0].equalsIgnoreCase("m") && Integer.parseInt(createCustomPlayer[4]) < 10){
+                    System.err.println("El valor de Inteligencia elejido esta fuera del rango permitido. Escoge un valor entre 10 y 50");
+                    Scanner scan6 = new Scanner(System.in);
+                    createCustomPlayer = scan6.nextLine().split("-");
+                }
+                if (createCustomPlayer[0].equalsIgnoreCase("m") && Integer.parseInt(createCustomPlayer[4]) > 50){
+                    System.err.println("El valor de Inteligencia elejido esta fuera del rango permitido. Escoge un valor entre 10 y 50");
+                    Scanner scan7 = new Scanner(System.in);
+                    createCustomPlayer = scan7.nextLine().split("-");
+                }
+
+                //Funcion para que Fuerza de Gerrero esté en reango
+                if (createCustomPlayer[0].equalsIgnoreCase("g") && Integer.parseInt(createCustomPlayer[4]) < 1){
+                    System.err.println("El valor de Fuerza elejido esta fuera del rango permitido. Escoge un valor entre 1 y 10");
+                    Scanner scan8 = new Scanner(System.in);
+                    createCustomPlayer = scan8.nextLine().split("-");
+                }
+                if (createCustomPlayer[0].equalsIgnoreCase("g") && Integer.parseInt(createCustomPlayer[4]) > 10){
+                    System.err.println("El valor de Fuerza elejido esta fuera del rango permitido. Escoge un valor entre 1 y 10");
+                    Scanner scan9 = new Scanner(System.in);
+                    createCustomPlayer = scan9.nextLine().split("-");
+                }
+
+
                 //segunda condicion de la funcion
                 //if (createCustomPlayer[2] - valores de HP
                 //if (createCustomPlayer[3] - valores de Mana / Stamina
-                //if (createCustomPlayer[4] - valores de Strength / Intelligence
+                //if (createCustomPlayer[4] - valores de Strength  Intelligence
 
             String characterTypeCustom = createCustomPlayer[0];
             int id = setId(numEquipo);
