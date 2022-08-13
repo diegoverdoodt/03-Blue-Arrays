@@ -66,7 +66,7 @@ public abstract class Character implements Attacker {
     public void pause(){
         try {
             //Ponemos a "Dormir" el programa durante los ms que queremos
-            Thread.sleep(500);
+            Thread.sleep(300);
         }
         catch (Exception e) {
             System.out.println(e);
